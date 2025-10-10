@@ -9,36 +9,29 @@
 * Related Document: See README.md
 *
 ********************************************************************************
-* Copyright 2025, Cypress Semiconductor Corporation (an Infineon company) or
-* an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
-*
-* This software, including source code, documentation and related
-* materials ("Software") is owned by Cypress Semiconductor Corporation
-* or one of its affiliates ("Cypress") and is protected by and subject to
-* worldwide patent protection (United States and foreign),
-* United States copyright laws and international treaty provisions.
-* Therefore, you may use this Software only as provided in the license
-* agreement accompanying the software package from which you
-* obtained this Software ("EULA").
-* If no EULA applies, Cypress hereby grants you a personal, non-exclusive,
-* non-transferable license to copy, modify, and compile the Software
-* source code solely for use in connection with Cypress's
-* integrated circuit products.  Any reproduction, modification, translation,
-* compilation, or representation of this Software except as specified
-* above is prohibited without the express written permission of Cypress.
-*
-* Disclaimer: THIS SOFTWARE IS PROVIDED AS-IS, WITH NO WARRANTY OF ANY KIND,
-* EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, NONINFRINGEMENT, IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. Cypress
-* reserves the right to make changes to the Software without notice. Cypress
-* does not assume any liability arising out of the application or use of the
-* Software or any product or circuit described in the Software. Cypress does
-* not authorize its products for use in any products where a malfunction or
-* failure of the Cypress product may reasonably be expected to result in
-* significant property damage, injury or death ("High Risk Product"). By
-* including Cypress's product in a High Risk Product, the manufacturer
-* of such system or application assumes all risk of such use and in doing
-* so agrees to indemnify Cypress against all liability.
+* (c) 2025-2025, Infineon Technologies AG, or an affiliate of Infineon Technologies AG. All rights reserved.
+* This software, associated documentation and materials ("Software") is owned by
+* Infineon Technologies AG or one of its affiliates ("Infineon") and is protected
+* by and subject to worldwide patent protection, worldwide copyright laws, and
+* international treaty provisions. Therefore, you may use this Software only as
+* provided in the license agreement accompanying the software package from which
+* you obtained this Software. If no license agreement applies, then any use,
+* reproduction, modification, translation, or compilation of this Software is
+* prohibited without the express written permission of Infineon.
+* Disclaimer: UNLESS OTHERWISE EXPRESSLY AGREED WITH INFINEON, THIS SOFTWARE
+* IS PROVIDED AS-IS, WITH NO WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING,
+* BUT NOT LIMITED TO, ALL WARRANTIES OF NON-INFRINGEMENT OF THIRD-PARTY RIGHTS AND
+* IMPLIED WARRANTIES SUCH AS WARRANTIES OF FITNESS FOR A SPECIFIC USE/PURPOSE OR
+* MERCHANTABILITY. Infineon reserves the right to make changes to the Software
+* without notice. You are responsible for properly designing, programming, and
+* testing the functionality and safety of your intended application of the
+* Software, as well as complying with any legal requirements related to its
+* use. Infineon does not guarantee that the Software will be free from intrusion,
+* data theft or loss, or other breaches ("Security Breaches"), and Infineon
+* shall have no liability arising out of any Security Breaches. Unless otherwise
+* explicitly approved by Infineon, the Software may not be used in any application
+* where a failure of the Product or any consequences of the use thereof can
+* reasonably be expected to result in personal injury.
 *******************************************************************************/
 /*******************************************************************************
 * Header Files
@@ -63,6 +56,16 @@
 #define VG_PARAMS_POS        (0UL)
 
 #define I2C_CONTROLLER_IRQ_PRIORITY         (2UL)
+
+#ifdef USE_KIT_PSE84_AI
+#define DISPLAY_I2C_CONTROLLER_IRQ          (CYBSP_I2C_DISPLAY_CONTROLLER_IRQ)
+#define DISPLAY_I2C_CONTROLLER_HW           (CYBSP_I2C_DISPLAY_CONTROLLER_HW)
+#define DISPLAY_I2C_CONTROLLER_config       (CYBSP_I2C_DISPLAY_CONTROLLER_config)
+#else
+#define DISPLAY_I2C_CONTROLLER_IRQ          (CYBSP_I2C_CONTROLLER_IRQ)
+#define DISPLAY_I2C_CONTROLLER_HW           (CYBSP_I2C_CONTROLLER_HW)
+#define DISPLAY_I2C_CONTROLLER_config       (CYBSP_I2C_CONTROLLER_config)
+#endif
 
 /*******************************************************************************
 * Global Variable(s)
@@ -94,7 +97,7 @@ cy_stc_scb_i2c_context_t disp_i2c_controller_context;
 
 cy_stc_sysint_t disp_i2c_controller_irq_cfg =
 {
-    .intrSrc      = CYBSP_I2C_CONTROLLER_IRQ,
+    .intrSrc      = DISPLAY_I2C_CONTROLLER_IRQ,
     .intrPriority = I2C_CONTROLLER_IRQ_PRIORITY,
 };
 
@@ -333,7 +336,7 @@ static void dc_irq_handler(void)
 *******************************************************************************/
 static void disp_i2c_controller_interrupt(void)
 {
-    Cy_SCB_I2C_Interrupt(CYBSP_I2C_CONTROLLER_HW, &disp_i2c_controller_context);
+    Cy_SCB_I2C_Interrupt(DISPLAY_I2C_CONTROLLER_HW, &disp_i2c_controller_context);
 }
 
 
@@ -386,8 +389,8 @@ void cm55_ns_gfx_task(void *arg)
         NVIC_EnableIRQ(GFXSS_DC_IRQ);
 
                 /* Initialize the I2C in controller mode. */
-        i2c_result = Cy_SCB_I2C_Init(CYBSP_I2C_CONTROLLER_HW,
-                    &CYBSP_I2C_CONTROLLER_config, &disp_i2c_controller_context);
+        i2c_result = Cy_SCB_I2C_Init(DISPLAY_I2C_CONTROLLER_HW,
+                    &DISPLAY_I2C_CONTROLLER_config, &disp_i2c_controller_context);
 
         if (CY_SCB_I2C_SUCCESS != i2c_result)
         {
@@ -409,10 +412,10 @@ void cm55_ns_gfx_task(void *arg)
         NVIC_EnableIRQ(disp_i2c_controller_irq_cfg.intrSrc);
 
         /* Enable the I2C */
-        Cy_SCB_I2C_Enable(CYBSP_I2C_CONTROLLER_HW);
+        Cy_SCB_I2C_Enable(DISPLAY_I2C_CONTROLLER_HW);
 
         /* Initialize the display */
-        panel_status = mtb_disp_waveshare_4p3_init(CYBSP_I2C_CONTROLLER_HW,
+        panel_status = mtb_disp_waveshare_4p3_init(DISPLAY_I2C_CONTROLLER_HW,
                                                   &disp_i2c_controller_context);
 
         if (CY_RSLT_SUCCESS != panel_status)

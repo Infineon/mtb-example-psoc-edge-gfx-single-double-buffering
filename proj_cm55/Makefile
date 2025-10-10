@@ -7,7 +7,7 @@
 #
 ################################################################################
 # \copyright
-# Copyright 2025, Cypress Semiconductor Corporation (an Infineon company)
+# (c) 2025-2025, Infineon Technologies AG, or an affiliate of Infineon Technologies AG.
 # SPDX-License-Identifier: Apache-2.0
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -110,6 +110,10 @@ PREBUILD=
 # Custom post-build commands to run.
 POSTBUILD=
 
+# Custom define for KIT_PSE84_AI
+ifeq (APP_KIT_PSE84_AI, $(TARGET))
+DEFINES+=USE_KIT_PSE84_AI
+endif
 
 ################################################################################
 # Paths

@@ -14,7 +14,7 @@ This code example has a three project structure: CM33 secure, CM33 non-secure, a
 
 [View this README on GitHub.](https://github.com/Infineon/mtb-example-psoc-edge-gfx-single-double-buffering)
 
-[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyNDE5MTkiLCJTcGVjIE51bWJlciI6IjAwMi00MTkxOSIsIkRvYyBUaXRsZSI6IlBTT0MmdHJhZGU7IEVkZ2UgTUNVOiBHcmFwaGljcyB1c2luZyBzaW5nbGUgYW5kIGRvdWJsZSBidWZmZXJpbmciLCJyaWQiOiJuZXJsaWthciIsIkRvYyB2ZXJzaW9uIjoiMi4wLjAiLCJEb2MgTGFuZ3VhZ2UiOiJFbmdsaXNoIiwiRG9jIERpdmlzaW9uIjoiTUNEIiwiRG9jIEJVIjoiSUNXIiwiRG9jIEZhbWlseSI6IlBTT0MifQ==)
+[Provide feedback on this code example.](https://cypress.co1.qualtrics.com/jfe/form/SV_1NTns53sK2yiljn?Q_EED=eyJVbmlxdWUgRG9jIElkIjoiQ0UyNDE5MTkiLCJTcGVjIE51bWJlciI6IjAwMi00MTkxOSIsIkRvYyBUaXRsZSI6IlBTT0MmdHJhZGU7IEVkZ2UgTUNVOiBHcmFwaGljcyB1c2luZyBzaW5nbGUgYW5kIGRvdWJsZSBidWZmZXJpbmciLCJyaWQiOiJuZXJsaWthciIsIkRvYyB2ZXJzaW9uIjoiMi4xLjAiLCJEb2MgTGFuZ3VhZ2UiOiJFbmdsaXNoIiwiRG9jIERpdmlzaW9uIjoiTUNEIiwiRG9jIEJVIjoiSUNXIiwiRG9jIEZhbWlseSI6IlBTT0MifQ==)
 
 See the [Design and implementation](docs/design_and_implementation.md) for the functional description of this code example.
 
@@ -39,6 +39,7 @@ See the [Design and implementation](docs/design_and_implementation.md) for the f
 
 - [PSOC&trade; Edge E84 Evaluation Kit](https://www.infineon.com/KIT_PSE84_EVAL) (`KIT_PSE84_EVAL_EPC2`) – Default value of `TARGET`
 - [PSOC&trade; Edge E84 Evaluation Kit](https://www.infineon.com/KIT_PSE84_EVAL) (`KIT_PSE84_EVAL_EPC4`)
+- [PSOC&trade; Edge E84 AI Kit](https://www.infineon.com/KIT_PSE84_AI) (`KIT_PSE84_AI`)
 
 
 ## Hardware setup
@@ -49,14 +50,17 @@ Ensure the following jumper and pin configuration on board.
 - BOOT SW must be in the HIGH/ON position
 - J20 and J21 must be in the tristate/not connected (NC) position
 
+> **Note:** This hardware setup is not required for KIT_PSE84_AI.
+
 ### Supported display and electrical connection with KIT_PSE84_EVAL 
 
 - **Waveshare 4.3 inch Raspberry Pi DSI 800*480 display:** <br>
   Connect the FPC 15-pin cable between the display connector and the PSOC&trade; Edge E84's RPI MIPI DSI connector as outlined in the table below and shown in Figure 1.
 
-  Display's Connector | PSOC&trade; Edge E84 Evaluation Kit's connector
-  ------------------- | ----------------------------------------------------
-  DSI connector       | J38
+   Kit's name                                      | DSI connector 
+  ------------------------------------------------ | --------------
+   PSOC&trade; Edge E84 Evaluation Kit             | J39
+   PSOC&trade; Edge E84 AI Kit                     | J10
 
   **Figure 1. Display connection with PSOC&trade; Edge E84 evaluation kit**
 
@@ -123,6 +127,7 @@ Document title: *CE241919* – *PSOC&trade; Edge MCU: Graphics using single and 
  ------- | ---------------------
  1.x.0   | New code example <br> Early access release
  2.0.0   | GitHub release 
+ 2.1.0   | Added support for KIT_PSE84_AI
 <br>
 
 
