@@ -110,9 +110,15 @@ PREBUILD=
 # Custom post-build commands to run.
 POSTBUILD=
 
-# Custom define for KIT_PSE84_AI
+# Check which kit is being used
 ifeq (APP_KIT_PSE84_AI, $(TARGET))
 DEFINES+=USE_KIT_PSE84_AI
+CY_IGNORE += $(SEARCH_display-tft-st7701s)
+else ifeq (APP_KIT_PSE84_HMI, $(TARGET))
+DEFINES+=USE_KIT_PSE84_HMI
+CY_IGNORE += $(SEARCH_display-dsi-waveshare-4-3-lcd)
+else
+CY_IGNORE += $(SEARCH_display-tft-st7701s)
 endif
 
 ################################################################################

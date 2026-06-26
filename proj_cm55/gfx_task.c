@@ -9,33 +9,33 @@
 * Related Document: See README.md
 *
 ********************************************************************************
- * (c) 2025-2026, Infineon Technologies AG, or an affiliate of Infineon
- * Technologies AG. All rights reserved.
- * This software, associated documentation and materials ("Software") is
- * owned by Infineon Technologies AG or one of its affiliates ("Infineon")
- * and is protected by and subject to worldwide patent protection, worldwide
- * copyright laws, and international treaty provisions. Therefore, you may use
- * this Software only as provided in the license agreement accompanying the
- * software package from which you obtained this Software. If no license
- * agreement applies, then any use, reproduction, modification, translation, or
- * compilation of this Software is prohibited without the express written
- * permission of Infineon.
- *
- * Disclaimer: UNLESS OTHERWISE EXPRESSLY AGREED WITH INFINEON, THIS SOFTWARE
- * IS PROVIDED AS-IS, WITH NO WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING, BUT NOT LIMITED TO, ALL WARRANTIES OF NON-INFRINGEMENT OF
- * THIRD-PARTY RIGHTS AND IMPLIED WARRANTIES SUCH AS WARRANTIES OF FITNESS FOR A
- * SPECIFIC USE/PURPOSE OR MERCHANTABILITY.
- * Infineon reserves the right to make changes to the Software without notice.
- * You are responsible for properly designing, programming, and testing the
- * functionality and safety of your intended application of the Software, as
- * well as complying with any legal requirements related to its use. Infineon
- * does not guarantee that the Software will be free from intrusion, data theft
- * or loss, or other breaches ("Security Breaches"), and Infineon shall have
- * no liability arising out of any Security Breaches. Unless otherwise
- * explicitly approved by Infineon, the Software may not be used in any
- * application where a failure of the Product or any consequences of the use
- * thereof can reasonably be expected to result in personal injury.
+* (c) 2025-2026, Infineon Technologies AG, or an affiliate of Infineon
+* Technologies AG. All rights reserved.
+* This software, associated documentation and materials ("Software") is
+* owned by Infineon Technologies AG or one of its affiliates ("Infineon")
+* and is protected by and subject to worldwide patent protection, worldwide
+* copyright laws, and international treaty provisions. Therefore, you may use
+* this Software only as provided in the license agreement accompanying the
+* software package from which you obtained this Software. If no license
+* agreement applies, then any use, reproduction, modification, translation, or
+* compilation of this Software is prohibited without the express written
+* permission of Infineon.
+*
+* Disclaimer: UNLESS OTHERWISE EXPRESSLY AGREED WITH INFINEON, THIS SOFTWARE
+* IS PROVIDED AS-IS, WITH NO WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+* INCLUDING, BUT NOT LIMITED TO, ALL WARRANTIES OF NON-INFRINGEMENT OF
+* THIRD-PARTY RIGHTS AND IMPLIED WARRANTIES SUCH AS WARRANTIES OF FITNESS FOR A
+* SPECIFIC USE/PURPOSE OR MERCHANTABILITY.
+* Infineon reserves the right to make changes to the Software without notice.
+* You are responsible for properly designing, programming, and testing the
+* functionality and safety of your intended application of the Software, as
+* well as complying with any legal requirements related to its use. Infineon
+* does not guarantee that the Software will be free from intrusion, data theft
+* or loss, or other breaches ("Security Breaches"), and Infineon shall have
+* no liability arising out of any Security Breaches. Unless otherwise
+* explicitly approved by Infineon, the Software may not be used in any
+* application where a failure of the Product or any consequences of the use
+* thereof can reasonably be expected to result in personal injury.
 *******************************************************************************/
 /*******************************************************************************
 * Header Files
@@ -59,13 +59,13 @@
 *******************************************************************************/
 #define VG_PARAMS_POS        (0UL)
 
+#if defined(USE_KIT_PSE84_AI)
 #define I2C_CONTROLLER_IRQ_PRIORITY         (2UL)
-
-#ifdef USE_KIT_PSE84_AI
 #define DISPLAY_I2C_CONTROLLER_IRQ          (CYBSP_I2C_DISPLAY_CONTROLLER_IRQ)
 #define DISPLAY_I2C_CONTROLLER_HW           (CYBSP_I2C_DISPLAY_CONTROLLER_HW)
 #define DISPLAY_I2C_CONTROLLER_config       (CYBSP_I2C_DISPLAY_CONTROLLER_config)
-#else
+#elif !defined(USE_KIT_PSE84_HMI)
+#define I2C_CONTROLLER_IRQ_PRIORITY         (2UL)
 #define DISPLAY_I2C_CONTROLLER_IRQ          (CYBSP_I2C_CONTROLLER_IRQ)
 #define DISPLAY_I2C_CONTROLLER_HW           (CYBSP_I2C_CONTROLLER_HW)
 #define DISPLAY_I2C_CONTROLLER_config       (CYBSP_I2C_CONTROLLER_config)
@@ -97,6 +97,16 @@ cy_stc_sysint_t dc_irq_cfg =
     .intrPriority = DC_INT_PRIORITY
 };
 
+#if defined(USE_KIT_PSE84_HMI)
+mtb_display_st7701s_backlight_config_t st7701s_backlight_cfg =
+{
+    .bl_port    = CYBSP_DISP_BACKLIGHT_PWM_PORT,
+    .bl_pin     = CYBSP_DISP_BACKLIGHT_PWM_PIN,
+    .pwm_hw     = CYBSP_PWM_DISP_BACKLIGHT_HW,
+    .pwm_num    = CYBSP_PWM_DISP_BACKLIGHT_NUM,
+    .pwm_config = &CYBSP_PWM_DISP_BACKLIGHT_config
+};
+#else
 cy_stc_scb_i2c_context_t disp_i2c_controller_context;
 
 cy_stc_sysint_t disp_i2c_controller_irq_cfg =
@@ -104,6 +114,7 @@ cy_stc_sysint_t disp_i2c_controller_irq_cfg =
     .intrSrc      = DISPLAY_I2C_CONTROLLER_IRQ,
     .intrPriority = I2C_CONTROLLER_IRQ_PRIORITY,
 };
+#endif
 
 static volatile uint8_t toggle_buffer_mode = RESET_VAL;
 static volatile uint8_t image_select       = RESET_VAL;
@@ -324,6 +335,7 @@ static void dc_irq_handler(void)
 }
 
 
+#if !defined(USE_KIT_PSE84_HMI)
 /*******************************************************************************
 * Function Name: disp_i2c_controller_interrupt
 ********************************************************************************
@@ -342,6 +354,7 @@ static void disp_i2c_controller_interrupt(void)
 {
     Cy_SCB_I2C_Interrupt(DISPLAY_I2C_CONTROLLER_HW, &disp_i2c_controller_context);
 }
+#endif
 
 
 /*******************************************************************************
@@ -370,10 +383,13 @@ void cm55_ns_gfx_task(void *arg)
     vg_lite_error_t error = VG_LITE_SUCCESS;
     cy_en_sysint_status_t sysint_status = CY_SYSINT_SUCCESS;
     cy_rslt_t panel_status = CY_RSLT_SUCCESS;
+
+#if !defined(USE_KIT_PSE84_HMI)
     cy_en_scb_i2c_status_t i2c_result = CY_SCB_I2C_SUCCESS;
 
     /* MIPI-DSI Display specific configs */
     GFXSS_config.mipi_dsi_cfg = &mtb_disp_waveshare_4p3_dsi_config;
+#endif
 
     /* Initializes the graphics system according to the configuration */
     status = Cy_GFXSS_Init(base, &GFXSS_config, &gfx_context);
@@ -392,7 +408,16 @@ void cm55_ns_gfx_task(void *arg)
         /* Enable interrupt in NVIC. */
         NVIC_EnableIRQ(GFXSS_DC_IRQ);
 
-                /* Initialize the I2C in controller mode. */
+#if defined(USE_KIT_PSE84_HMI)
+        panel_status =  mtb_display_st7701s_init(GFXSS_GFXSS_MIPIDSI, &st7701s_backlight_cfg);
+        if(CY_MIPIDSI_SUCCESS != panel_status)
+        {
+            printf("st7701s 4-inch display init failed with status = %u\r\n", (unsigned int)panel_status);
+            CY_ASSERT(0);
+        }
+        mtb_display_st7701s_set_brightness(BRIGHTNESS_PERCENTAGE);
+#else
+        /* Initialize the I2C in controller mode. */
         i2c_result = Cy_SCB_I2C_Init(DISPLAY_I2C_CONTROLLER_HW,
                     &DISPLAY_I2C_CONTROLLER_config, &disp_i2c_controller_context);
 
@@ -430,6 +455,7 @@ void cm55_ns_gfx_task(void *arg)
             printf("Waveshare 4.3-inch R-Pi display init failed with status = %u\r\n", (unsigned int) panel_status);
             handle_app_error();
         }
+#endif
 
         /* Allocate memory for VGLite from the vglite_heap_base */
         vg_module_parameters_t vg_params;

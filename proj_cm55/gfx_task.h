@@ -38,7 +38,11 @@
 #ifndef GFX_TASK_H_
 #define GFX_TASK_H_
 
+#ifdef USE_KIT_PSE84_HMI
+#include "mtb_display_st7701s.h"
+#else
 #include "mtb_disp_dsi_waveshare_4p3.h"
+#endif
 
 /*******************************************************************************
  * Macros
@@ -50,8 +54,14 @@
 #define APP_BUFFER_COUNT                    (2U)
 /* 64 KB */
 #define DEFAULT_GPU_CMD_BUFFER_SIZE         ((64U) * (1024U))
+#if defined(USE_KIT_PSE84_HMI)
+#define DISPLAY_H                           (480U)
+#define DISPLAY_W                           (512U)
+#define BRIGHTNESS_PERCENTAGE               (100U)
+#else
 #define DISPLAY_H                           (MTB_DISP_WAVESHARE_4P3_VER_RES)
 #define DISPLAY_W                           (MTB_DISP_WAVESHARE_4P3_HOR_RES)
+#endif
 #define GPU_TESSELLATION_BUFFER_SIZE        ((DISPLAY_H) * 128U)
 #define FRAME_BUFFER_SIZE                   ((DISPLAY_W) * (DISPLAY_H) * \
                                             ((COLOR_DEPTH) / (BITS_PER_PIXEL)))
